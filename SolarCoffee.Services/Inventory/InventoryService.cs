@@ -18,15 +18,12 @@ namespace SolarCoffee.Services.Inventory
       _db = db;
       _logger = logger;
     }
-    
-    public void CreateSnapshot()
-    {
-      
-    }
 
     public ProductInventory GetByProductId(int productId)
     {
-      
+      return _db.ProductInventories
+        .Include(pi => pi.Product)
+        .FirstOrDefault(pi => pi.Product.Id == productId);
     }
 
     public List<ProductInventory> GetCurrentInventory()
@@ -39,7 +36,12 @@ namespace SolarCoffee.Services.Inventory
 
     public List<ProductInventorySnapshot> GetSnapshotHistory()
     {
-      
+      var earliest = DateTime.UtcNow - TimeSpan.FromHours(6);
+
+      return _db.ProductInventorySnapshots
+        .Include(snap => snap.Product)
+        .Where(snap => snap.SnapshotTime > earliest && !snap.Product.IsArchived)
+        .ToList();
     }
 
     public ServiceResponse<ProductInventory> UpdateUnitsAvailable(int id, int adjustment)
@@ -56,7 +58,7 @@ namespace SolarCoffee.Services.Inventory
 
         try
         {
-          CreateSnapshot();
+          CreateSnapshot(inventory);
         }
         catch (Exception ex)
         {
@@ -66,7 +68,8 @@ namespace SolarCoffee.Services.Inventory
 
         _db.SaveChanges();
 
-        return new ServiceResponse<ProductInventory> { 
+        return new ServiceResponse<ProductInventory>
+        {
           IsSuccess = true,
           Data = inventory,
           Message = $"Product {id} inventory adjusted.",
@@ -83,7 +86,22 @@ namespace SolarCoffee.Services.Inventory
           Time = now
         };
       }
-      
+
+    }
+
+    private void CreateSnapshot(ProductInventory inventory)
+    {
+      var now = DateTime.UtcNow;
+
+      var snapshot = new ProductInventorySnapshot
+      {
+        SnapshotTime = now,
+        Product = inventory.Product,
+        QuantityOnHand = inventory.QuantityOnHand
+      };
+
+      _db.Add(snapshot);
+      _db.SaveChanges();
     }
   }
 }
