@@ -18,14 +18,14 @@
          <solar-button
            type="button"
            aria-label="save new shipment"
-           @click="save"
+           @click.native="save"
          >
             Save Received Shipment
          </solar-button>
          <solar-button
            type="button"
            aria-label="close modal"
-           @click="close"
+           @click.native="close"
          >
             Close
          </solar-button>
@@ -38,6 +38,7 @@
     import SolarButton from "../SolarButton.vue";
     import SolarModal from "@/components/modals/SolarModal.vue";
    import {IProduct, IProductInventory} from "@/types/Product";
+   import {IShipment} from "@/types/Shipment";
 
     @Component({
         name: "ShipmentModal",
@@ -61,7 +62,12 @@
        qtyReceived: number = 0;
 
        save() {
+         const shipment: IShipment = {
+            productId: this.selectedProduct.id,
+            adjustment: this.qtyReceived
+         };
 
+         this.$emit('save:shipment', shipment);
        }
 
        close() {

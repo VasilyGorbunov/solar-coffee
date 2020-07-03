@@ -35,11 +35,13 @@
         </table>
         <new-product-modal
           v-if="isNewProductVisible"
+          @save:product="saveNewProduct"
           @close="closeModal"
         />
         <shipment-modal
           v-if="isShipmentVisible"
           :inventory="inventory"
+          @save:shipment="saveNewShipment"
           @close="closeModal"
         />
     </div>
@@ -47,13 +49,15 @@
 
 <script lang="ts">
     import {Component, Vue} from 'vue-property-decorator'
-    import {IProductInventory} from "@/types/Product";
+    import {IProduct, IProductInventory} from "@/types/Product";
     import SolarButton from "@/components/SolarButton.vue";
     import ShipmentModal from "@/components/modals/ShipmentModal.vue";
+    import NewProductModal from "@/components/modals/NewProductModal.vue";
+    import {IShipment} from "@/types/Shipment";
 
     @Component({
         name: "Inventory",
-        components: {ShipmentModal, SolarButton}
+        components: {NewProductModal, ShipmentModal, SolarButton}
     })
     export default class Inventory extends Vue {
         isNewProductVisible: boolean = false;
@@ -97,12 +101,20 @@
             this.isNewProductVisible = false;
         }
 
-        showNewProductModal() {
-
+        saveNewProduct(product: IProduct) {
+            console.log('saveNewProduct', product)
         }
 
-        showShipmentModal() {
+        saveNewShipment(shipment: IShipment) {
+            console.log('saveNewShipment', shipment)
+        }
 
+        showNewProductModal() {
+            this.isNewProductVisible = true
+        }
+
+        showNewShipmentModal() {
+            this.isShipmentVisible = true
         }
     }
 </script>

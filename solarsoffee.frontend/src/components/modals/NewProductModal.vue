@@ -81,5 +81,21 @@
       list-style: none;
       padding: 0;
       margin: 0;
+
+      input {
+         width: 100%;
+         height: 1.8rem;
+         margin-bottom: 1.2rem;
+         font-size: 1.1rem;
+         line-height: 1.3rem;
+         padding: 0.2rem;
+         color: #555;
+      }
+
+      label {
+         font-weight: bold;
+         display: block;;
+         margin-bottom: 0.3rem;
+      }
    }
 </style>
