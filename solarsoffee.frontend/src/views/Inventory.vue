@@ -77,8 +77,10 @@
             console.log('saveNewProduct', product)
         }
 
-        saveNewShipment(shipment: IShipment) {
-            console.log('saveNewShipment', shipment)
+        async saveNewShipment(shipment: IShipment) {
+            await inventoryService.updateInventoryQuantity(shipment);
+            this.isShipmentVisible = false;
+            await this.initialize();
         }
 
         showNewProductModal() {
@@ -89,12 +91,12 @@
             this.isShipmentVisible = true
         }
 
-        async fetchData() {
+        async initialize() {
             this.inventory = await inventoryService.getInventory();
         }
 
         async created() {
-            await this.fetchData();
+            await this.initialize();
         }
     }
 </script>
