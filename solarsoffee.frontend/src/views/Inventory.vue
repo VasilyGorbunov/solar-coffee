@@ -54,6 +54,9 @@
     import ShipmentModal from "@/components/modals/ShipmentModal.vue";
     import NewProductModal from "@/components/modals/NewProductModal.vue";
     import {IShipment} from "@/types/Shipment";
+    import {InventoryService} from "@/services/inventory-service";
+
+    const inventoryService = new InventoryService();
 
     @Component({
         name: "Inventory",
@@ -63,38 +66,7 @@
         isNewProductVisible: boolean = false;
         isShipmentVisible: boolean = false;
 
-        inventory: IProductInventory[] = [
-            {
-                id: 1,
-                product: {
-                    id: 1,
-                    name: 'Some Product',
-                    description: 'Good stuff',
-                    price: 100,
-                    createdOn: new Date(),
-                    updatedOn: new Date(),
-                    isTaxable: true,
-                    isArchived: false
-                },
-                quantityOnHand: 100,
-                idealQuantity: 100
-            },
-            {
-                id: 2,
-                product: {
-                    id: 2,
-                    name: 'Another Product',
-                    description: 'Good stuff',
-                    price: 100,
-                    createdOn: new Date(),
-                    updatedOn: new Date(),
-                    isTaxable: true,
-                    isArchived: false
-                },
-                quantityOnHand: 40,
-                idealQuantity: 20
-            }
-        ];
+        inventory: IProductInventory[] = [];
 
         closeModal() {
             this.isShipmentVisible = false;
@@ -115,6 +87,14 @@
 
         showNewShipmentModal() {
             this.isShipmentVisible = true
+        }
+
+        async fetchData() {
+            this.inventory = await inventoryService.getInventory();
+        }
+
+        async created() {
+            await this.fetchData();
         }
     }
 </script>
